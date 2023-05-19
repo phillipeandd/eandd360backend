@@ -17,7 +17,7 @@ app.use(express.static("uploads"));
 app.use(express.json());
 app.use(router);
 
- const port = process.env.PORT || 8081;
+ const port = 3306;
 // // Global databse connection
 // // app.use(async (req: any, res: any, next: any) => {
 // //   await DatabseConnection(req, res);
