@@ -1,0 +1,28 @@
+import express from "express";
+import users from "./users.routes";
+import tasks from "./tasks.routes";
+import exit from "./exits.routes";
+import events from "./events.routes";
+import interview from "./interview.routes";
+import attendance from "./attendance.routes";
+import letter_genaration from "./letter_genaration.routes";
+import compensation from "./compensation.routes";
+import dashboard from "./dashboard.routes";
+import shifts from "./shifts.routes";
+import notifications from "./notifications.routes";
+import pms from "./pms.routes";
+
+const router = express.Router();
+router.use("/users", users);
+router.use("/tasks", tasks);
+router.use("/exits", exit);
+router.use("/lettergenaration", letter_genaration);
+router.use("/compensation", compensation);
+router.use("/dashboard", dashboard);
+router.use("/users/events/interview", interview);
+router.use("/users/events", events);
+router.use("/attendance", attendance);
+router.use("/shifts", shifts);
+router.use("/notifications", notifications);
+router.use("/pms", pms);
+export default router;

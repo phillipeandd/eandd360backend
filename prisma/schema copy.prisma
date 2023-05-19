@@ -1,0 +1,365 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id                                     Int                                      @id @default(autoincrement())
+  employee_id                            String                                   @unique @db.VarChar(255)
+  password                               String                                   @default("") @db.VarChar(250)
+  email                                  String                                   @db.VarChar(180)
+  phone                                  String                                   @db.VarChar(180)
+  gender                                 users_gender
+  country                                String                                   @db.VarChar(180)
+  city                                   String                                   @db.VarChar(180)
+  bank_name                              String?                                  @db.VarChar(180)
+  branch_name                            String?                                  @db.VarChar(180)
+  dob                                    DateTime?                                @db.DateTime(0)
+  doj                                    DateTime?                                @db.DateTime(0)
+  ifsc_code                              String?                                  @db.VarChar(180)
+  ssc                                    String?                                  @db.VarChar(180)
+  transfer_certificate                   String?                                  @db.VarChar(180)
+  upi_id                                 String?                                  @db.VarChar(180)
+  aadhar_img                             String?                                  @db.VarChar(180)
+  aadhar_no                              String?                                  @db.VarChar(180)
+  account_holder_name                    String?                                  @db.VarChar(180)
+  bachelor                               String?                                  @db.VarChar(180)
+  bank_account_no                        String?                                  @db.VarChar(180)
+  blood_group                            String                                   @db.VarChar(180)
+  diploma                                String?                                  @db.VarChar(180)
+  expected_passout_year                  Int?                                     @db.Year
+  experience_certificate                 String?                                  @db.VarChar(180)
+  facebook_profile_link                  String?                                  @db.VarChar(180)
+  father_name                            String                                   @db.VarChar(180)
+  first_name                             String                                   @db.VarChar(180)
+  guardian_phone                         String?                                  @db.VarChar(180)
+  house_no                               String                                   @db.VarChar(180)
+  increment_letter                       String?                                  @db.VarChar(180)
+  instagram_profile_link                 String?                                  @db.VarChar(180)
+  intermediate                           String?                                  @db.VarChar(180)
+  last_name                              String                                   @db.VarChar(180)
+  linkedIn_profile_link                  String?                                  @db.VarChar(180)
+  marks_memo                             String?                                  @db.VarChar(180)
+  master                                 String?                                  @db.VarChar(180)
+  mother_name                            String                                   @db.VarChar(180)
+  nationality                            String                                   @db.VarChar(180)
+  offer_letter                           String?                                  @db.VarChar(180)
+  pancard_img                            String?                                  @db.VarChar(180)
+  pancard_no                             String?                                  @db.VarChar(180)
+  passout_year                           Int?                                     @db.Year
+  passport_size_photo                    String?                                  @db.VarChar(180)
+  payslips                               String?                                  @db.VarChar(180)
+  resignation_letter                     String?                                  @db.VarChar(180)
+  state                                  String                                   @db.VarChar(180)
+  street                                 String                                   @db.VarChar(180)
+  twitter_profile_link                   String?                                  @db.VarChar(180)
+  status                                 users_status                             @default(pending)
+  compensation                           String                                   @default("") @db.VarChar(180)
+  department                             String                                   @default("") @db.VarChar(255)
+  designation                            String                                   @default("") @db.VarChar(180)
+  highest_qualification                  String                                   @db.VarChar(250)
+  notice_period                          String                                   @default("") @db.VarChar(180)
+  username                               String                                   @db.VarChar(180)
+  role                                   users_role                               @default(user)
+  attendance                             attendance[]
+  event_attendees                        event_attendees[]
+  events                                 events[]
+  shifts                                 shift_timings[]
+  employee_leaves                        employee_leaves[]
+  task                                   task[]
+  feedback                               feedback[]
+  employee_compensation                  employee_compensation[]
+  employee_complants_advices_suggestions employee_complants_advices_suggestions[]
+  employee_letters                       employee_letters[]
+}
+
+model attendance {
+  id          Int                         @id @default(autoincrement()) @db.UnsignedInt
+  date_in     DateTime                    @db.Date
+  shift_in    DateTime                    @db.Time
+  shift_out   DateTime                    @db.Time
+  log_in      DateTime                    @default(now()) @db.Time
+  log_out     DateTime?                   @db.Time
+  created_at  DateTime                    @default(now())
+  updated_at  DateTime                    @updatedAt
+  employee_id String                      @db.VarChar(255)
+  user        users?                      @relation(fields: [employee_id], references: [employee_id], map: "Attendance_user_id_fkey", onUpdate: Cascade, onDelete: Restrict)
+  breaks      breaks[]
+  status      attendance_available_status @default(unavailable)
+}
+
+enum attendance_available_status {
+  break
+  available
+  unavailable
+  salah
+}
+
+model breaks {
+  id           Int       @id @default(autoincrement()) @db.UnsignedInt
+  break_start  DateTime  @default(now()) @db.Timestamp(0)
+  break_end    DateTime? @db.Timestamp(0)
+  attendanceId Int?      @db.UnsignedInt
+
+  attendance attendance? @relation(fields: [attendanceId], references: [id])
+
+  @@index([attendanceId], map: "Break_attendanceId_fkey")
+}
+
+model checklists {
+  id           Int                     @id @default(autoincrement())
+  employee_id  String
+  id_card      Boolean
+  cell_phone   Boolean
+  laptop       Boolean
+  files        Boolean
+  key_s        Boolean
+  check_status checklists_check_status
+}
+
+model employee_compensation {
+  id                     Int      @id @default(autoincrement())
+  employee_id            String   @db.VarChar(255)
+  employee               users    @relation(fields: [employee_id], references: [employee_id], onUpdate: Cascade, onDelete: Restrict)
+  date_of_discussion     DateTime @db.Date
+  date_of_implementation DateTime @db.Date
+  previous_ctc           String   @db.VarChar(255)
+  current_ctc            String   @db.VarChar(255)
+  percentage             String   @db.VarChar(255)
+  created_at             DateTime @default(now()) @db.Timestamp(0)
+}
+
+model employee_complants_advices_suggestions {
+  id          Int                                                @id @default(autoincrement())
+  employee_id String                                             @db.VarChar(255)
+  employee    users                                              @relation(fields: [employee_id], references: [employee_id], onUpdate: Cascade, onDelete: Restrict)
+  create_at   DateTime                                           @default(now()) @db.Date
+  message     String                                             @db.LongText
+  status      employee_complants_advices_suggestions_status
+  letter_type employee_complants_advices_suggestions_letter_type
+}
+
+model employee_leaves {
+  id              Int                             @id @default(autoincrement())
+  employee_id     String                          @db.VarChar(255)
+  employee        users                           @relation(fields: [employee_id], references: [employee_id], onUpdate: Cascade, onDelete: Restrict)
+  leave_status    employee_leaves_leave_status
+  leave_dates     String                          @db.VarChar(255)
+  reason          String                          @db.Text
+  permission_type employee_leaves_permission_type
+  create_at       DateTime                        @default(now()) @db.Date
+  from            String                          @db.VarChar(255)
+  to              String                          @db.VarChar(255)
+}
+
+model employee_letters {
+  id          Int                          @id @default(autoincrement())
+  employee_id String                       @db.VarChar(255)
+  employee    users                        @relation(fields: [employee_id], references: [employee_id], onUpdate: Cascade, onDelete: Restrict)
+  letter_type employee_letters_letter_type
+  letter      String                       @db.VarChar(255)
+  create_at   DateTime                     @default(now()) @db.DateTime(0)
+}
+
+model employee_resignation {
+  id                 Int                                     @default(autoincrement())
+  employee_id        String                                  @id
+  reason             String                                  @db.LongText
+  create_at          DateTime                                @default(now()) @db.Date
+  end_date           DateTime                                @db.Date
+  start_date         DateTime                                @db.Date
+  status             employee_resignation_status
+  send_check_list    employee_resignation_send_check_list
+  send_feedback_form employee_resignation_send_feedback_form
+
+  @@index([id], map: "id")
+}
+
+model event_attendees {
+  id          Int     @id @default(autoincrement())
+  event_id    String
+  events      events  @relation(fields: [event_id], references: [event_id], onUpdate: Restrict, onDelete: Cascade)
+  email       String?
+  name        String?
+  phone       String?
+  location    String? @db.VarChar(255)
+  response    String? @db.Text
+  attendee_id String? @db.VarChar(255)
+  attendee    users?  @relation(fields: [attendee_id], references: [employee_id], onUpdate: Cascade, onDelete: Restrict)
+}
+
+model events {
+  event_id         String            @id @default(uuid())
+  created_by       String
+  creator          users             @relation(fields: [created_by], references: [employee_id], onUpdate: Cascade, onDelete: Restrict)
+  title            String
+  description      String?           @db.VarChar(255)
+  start            DateTime
+  end              DateTime
+  kind             String
+  status           String?           @db.VarChar(255)
+  interview_status String?           @db.Text
+  event_attendees  event_attendees[]
+}
+
+model feedback {
+  id              Int             @default(autoincrement())
+  feed_from_id    Int             @default(1)
+  employee_id     String          @id @db.VarChar(255)
+  employee        users           @relation(fields: [employee_id], references: [employee_id], onUpdate: Cascade, onDelete: Restrict)
+  fed_question_1  String          @db.Text
+  fed_question_2  String          @db.Text
+  fed_question_3  String          @db.Text
+  fed_question_4  String          @db.Text
+  fed_question_5  String          @db.Text
+  fed_question_6  String          @db.Text
+  fed_question_7  String          @db.Text
+  fed_question_8  String          @db.Text
+  fed_question_9  String          @db.Text
+  fed_question_10 String          @db.Text
+  fed_question_11 String          @db.Text
+  status          feedback_status
+  create_at       DateTime        @default(now()) @db.Date
+
+  @@index([id], map: "id")
+}
+
+model feedback_questions {
+  id              Int    @id @default(autoincrement())
+  feed_from_id    Int    @default(1)
+  feed_quasion_id Int
+  question        String @db.VarChar(255)
+}
+
+model task {
+  id          Int         @id @default(autoincrement())
+  title       String
+  description String
+  attachment  String
+  team        String
+  employee_id String
+  employee    users       @relation(fields: [employee_id], references: [employee_id], onUpdate: Cascade, onDelete: Restrict)
+  start_date  DateTime
+  end_date    DateTime
+  createdAt   DateTime    @default(now()) @db.Timestamp(6)
+  status      task_status
+  priority    String?     @default("low")
+}
+
+model shift_timings {
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  employee_id String
+  employee    users    @relation(fields: [employee_id], references: [employee_id], onUpdate: Cascade, onDelete: Restrict)
+  shift_in    DateTime @db.Time
+  shift_out   DateTime @db.Time
+  created_at  DateTime @default(now()) @db.Timestamp()
+}
+
+model policies_attedance {
+  id            Int      @id @default(autoincrement()) @db.UnsignedInt
+  start_minutes Int?     @db.UnsignedSmallInt
+  end_minutes   Int?     @db.UnsignedSmallInt
+  point         Float    @db.Float
+  type          String //late_login
+  created_at    DateTime @default(now()) @db.Timestamp()
+  lop           String? // loss of pay
+  status        Boolean  @default(true)
+}
+
+enum checklists_check_status {
+  pending
+  completed
+  EMPTY_ENUM_VALUE @map("")
+}
+
+enum employee_complants_advices_suggestions_status {
+  pending
+  accepted
+  rejected
+  EMPTY_ENUM_VALUE @map("")
+}
+
+enum employee_complants_advices_suggestions_letter_type {
+  complaints
+  advices_suggestions
+}
+
+enum employee_leaves_leave_status {
+  pending
+  accepted
+  rejected
+  EMPTY_ENUM_VALUE @map("")
+}
+
+enum employee_leaves_permission_type {
+  EMPTY_ENUM_VALUE @map("")
+  leave
+  latelogin
+  earlylogout
+}
+
+enum employee_letters_letter_type {
+  probation
+  offer
+  increment
+  relieving
+  exprience
+  others
+}
+
+enum employee_resignation_status {
+  pending
+  accepted
+  rejected
+  EMPTY_ENUM_VALUE @map("")
+}
+
+enum employee_resignation_send_check_list {
+  pending
+  awaiting
+  completed
+}
+
+enum employee_resignation_send_feedback_form {
+  pending
+  awaiting
+  completed
+}
+
+enum feedback_status {
+  pending
+  send
+  EMPTY_ENUM_VALUE @map("")
+}
+
+enum task_status {
+  pending
+  completed
+  started
+  EMPTY_ENUM_VALUE @map("")
+}
+
+enum users_gender {
+  Male
+  Female
+  Other
+  EMPTY_ENUM_VALUE @map("")
+}
+
+enum users_status {
+  pending
+  rejected
+  accepted
+  EMPTY_ENUM_VALUE @map("")
+}
+
+enum users_role {
+  user
+  hr
+  admin
+manager
+}
